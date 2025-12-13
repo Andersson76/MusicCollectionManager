@@ -1,4 +1,4 @@
-namespace MusicCollectionManager.Services
+namespace MusicCollectionManager.Interfaces
 {
     /// <summary>
     /// Interface that defines the contract for entities stored in DataStore.
