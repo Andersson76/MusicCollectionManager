@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicCollectionManager.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace MusicCollectionManager.Models
 {
@@ -6,14 +7,22 @@ namespace MusicCollectionManager.Models
     /// Representerar en musikartist i systemet.
     /// Detta är en domänmodell som innehåller endast data och enkel logik kopplad till objektets giltighet.
     /// </summary>
-    public class Artist
+    public class Artist : IEntity
     {
         // Privata fält (inkapsling)
         // Dessa kan inte ändras direkt utifrån klassen,
         // vilket skyddar objektets interna tillstånd.
+        
+        [JsonInclude]
         private int _id;
+        
+        [JsonInclude]
         private string _name = string.Empty;
+        
+        [JsonInclude]
         private string _country = string.Empty;
+        
+        [JsonInclude]
         private Genre _genre;
 
         /// <summary>
@@ -64,6 +73,14 @@ namespace MusicCollectionManager.Models
                 !string.IsNullOrWhiteSpace(Name) &&
                 !string.IsNullOrWhiteSpace(Country);
         }
+
+        /// <summary>
+        /// Returnerar en strängrepresentation av artisten.
+        /// </summary>
+        public override string ToString()
+        {
+            return $"{Name} ({Country}) - {Genre}";
+        }
     }
 
     /// <summary>
@@ -72,13 +89,13 @@ namespace MusicCollectionManager.Models
     /// </summary>
     public enum Genre
     {
-        Unknown,
-        Rock,
-        Pop,
-        HipHop,
-        Jazz,
-        Electronic,
-        Classical,
-        Metal
+        Unknown = 0,
+        Rock = 1,
+        Pop = 2,
+        HipHop = 3,
+        Jazz = 4,
+        Electronic = 5,
+        Classical = 6,
+        Metal = 7
     }
 }

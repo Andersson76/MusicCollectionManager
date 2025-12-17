@@ -1,20 +1,35 @@
-﻿namespace MusicCollectionManager.Models
+﻿using MusicCollectionManager.Interfaces;
+using System.Text.Json.Serialization;
+
+namespace MusicCollectionManager.Models
 {
     /// <summary>
     /// Representerar ett musikalbum i systemet.
     /// - Inkapsling (privata fält, publika properties)
     /// - Association till Artist via ArtistId
     /// </summary>
-    public class Album
+    public class Album : IEntity
     {
         // Inkapsling:
         // Fälten är privata för att skydda objektets interna tillstånd.
         // All åtkomst sker via publika properties.
+        
+        [JsonInclude]
         private int _id;
+        
+        [JsonInclude]
         private string _title = string.Empty;
+        
+        [JsonInclude]
         private int _artistId;
+        
+        [JsonInclude]
         private int _releaseYear;
+        
+        [JsonInclude]
         private Genre _genre;
+        
+        [JsonInclude]
         private int _rating;
 
         public int Id
@@ -91,6 +106,15 @@
             if (Rating != 0 && (Rating < 1 || Rating > 5)) return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Returnerar en strängrepresentation av albumet.
+        /// </summary>
+        public override string ToString()
+        {
+            var ratingText = Rating > 0 ? $"⭐ {Rating}/5" : "Inget betyg";
+            return $"{Title} ({ReleaseYear}) - {Genre} - {ratingText}";
         }
     }
 }
