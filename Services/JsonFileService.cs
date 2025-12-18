@@ -141,5 +141,10 @@ namespace MusicCollectionManager.Services.Json
             foreach (var _ in data) count++;
             return count;
         }
+        public bool FileExists(string fileName, string? subDirectory = null)
+        {
+            string filePath = GetFilePath(fileName, subDirectory);
+            return File.Exists(filePath);
+        }
     }
 }

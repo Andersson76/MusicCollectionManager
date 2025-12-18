@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MusicCollectionManager.Services;
+using MusicCollectionManager.Services.Json;
 
 namespace MusicCollectionManager.Tests
 {
