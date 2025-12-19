@@ -44,26 +44,78 @@ Projektet examinerar bland annat:
 
 ---
 
-## 🏗️ Projektstruktur
+## 🧠 Designöversikt
+
+### 📐 Övergripande arkitektur
+
+Projektet är uppdelat i tre huvudsakliga lager:
+
+- **Models** – Domänmodeller (Artist, Album)
+- **Services** – Affärslogik och datalagring
+- **UI** – Menyer och presentation i konsolen
+
+---
+
+### 📊 Pseudodiagram / Klassöversikt
 
 ```text
-MusicCollectionManager/
-│
-├── Program.cs              // Entry point
-│
-├── Models/                 // Domänmodeller
-│   ├── Artist.cs
-│   ├── Album.cs
-│   └── Genre.cs
-│
-├── Interfaces/             // Interfaces (t.ex. IEntity)
-│
-├── Services/               // Affärslogik & datalagring
-│   ├── MusicLibraryService.cs
-│   └── JsonFileService.cs
-│
-├── UI/                     // Menyer & tabellrendering
-│   └── Menu.cs
++------------------+
+|     Artist       |
++------------------+
+| - _id            |
+| - _name          |
+| - _country       |
+| - _genre         |
++------------------+
+| + Id             |
+| + Name           |
+| + Country        |
+| + Genre          |
+| + IsValid()      |
++------------------+
+
+          ▲
+          │ Association (ArtistId)
+          │
++------------------+
+|      Album       |
++------------------+
+| - _id            |
+| - _title         |
+| - _artistId      |
+| - _releaseYear   |
+| - _genre         |
+| - _rating        |
++------------------+
+| + UpdateRating() |
++------------------+
+
++-----------------------------+
+|   MusicLibraryService       |
++-----------------------------+
+| + AddArtist()               |
+| + AddAlbum()                |
+| + GetArtists()              |
+| + GetAlbums()               |
+| + UpdateArtist()            |
+| + UpdateAlbum()             |
+| + DeleteArtist()            |
+| + DeleteAlbum()             |
++-----------------------------+
+
++-----------------------------+
+|     JsonFileService         |
++-----------------------------+
+| + Load<T>()                 |
+| + Save<T>()                 |
++-----------------------------+
+
++-----------------------------+
+|           Menu              |
++-----------------------------+
+| + ShowMainMenu()            |
+| + HandleUserChoice()        |
++-----------------------------+
 │
 ├── Data/                   // JSON-filer
 │
