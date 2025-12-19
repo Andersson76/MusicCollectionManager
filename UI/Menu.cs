@@ -129,7 +129,7 @@ namespace MusicCollectionManager.UI
                 Justification = Justify.Left
             });
 
-            AnsiConsole.MarkupLine("[grey]Här kopplar ni in er riktiga UI-sida senare.[/]");
+            AnsiConsole.MarkupLine("[grey]Här kopplar vi in våran riktiga UI-sida senare.[/]");
             AnsiConsole.MarkupLine("Tryck valfri tangent för att gå tillbaka till menyn...");
             Console.ReadKey(true);
         }
