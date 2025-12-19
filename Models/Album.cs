@@ -1,5 +1,6 @@
 ﻿using MusicCollectionManager.Interfaces;
 using System.Text.Json.Serialization;
+using System.Linq;
 
 namespace MusicCollectionManager.Models
 {
@@ -31,6 +32,13 @@ namespace MusicCollectionManager.Models
         
         [JsonInclude]
         private int _rating;
+
+        /// <summary>
+        /// Komposition/aggregation:
+        /// Album innehåller en låtlista (Tracks). Tracks tillhör albumet i modellen.
+        /// </summary>
+        [JsonInclude]
+        private List<Track> _tracks = new();
 
         public int Id
         {
@@ -77,6 +85,12 @@ namespace MusicCollectionManager.Models
             private set => _rating = value;
         }
 
+        public List<Track> Tracks
+        {
+            get => _tracks;
+            set => _tracks = value ?? new();
+        }
+
         /// <summary>
         /// Uppdaterar betyget på albumet.
         /// Endast värden mellan 1 och 5 accepteras.
@@ -106,6 +120,14 @@ namespace MusicCollectionManager.Models
             if (Rating != 0 && (Rating < 1 || Rating > 5)) return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Summerar speltiden för albumets alla tracks (sekunder).
+        /// </summary>
+        public int GetTotalDuration()
+        {
+            return Tracks.Sum(t => t?.Duration ?? 0);
         }
 
         /// <summary>
