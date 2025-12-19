@@ -95,7 +95,7 @@ namespace MusicCollectionManager.Models
         /// </summary>
         public bool IsValid()
         {
-            if (Id <= 0) return false;
+            // if (Id <= 0) return false;
             if (string.IsNullOrWhiteSpace(Title)) return false;
             if (ArtistId <= 0) return false;
 

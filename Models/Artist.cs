@@ -69,7 +69,7 @@ namespace MusicCollectionManager.Models
         public bool IsValid()
         {
             return
-                Id > 0 &&
+               // Id > 0 &&
                 !string.IsNullOrWhiteSpace(Name) &&
                 !string.IsNullOrWhiteSpace(Country);
         }
