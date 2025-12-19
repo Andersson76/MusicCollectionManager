@@ -7,10 +7,7 @@ namespace MusicCollectionManager
     {
         static void Main(string[] args)
         {
-             var menu = new Menu();
-             menu.Start();
+            MainMenu.Run();
         }
-
-    
     }
 }
