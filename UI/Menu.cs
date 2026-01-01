@@ -1,6 +1,9 @@
 ﻿using Spectre.Console;
 using System;
-using System.Threading;
+using System.Threading.Tasks;
+using MusicCollectionManager.Models;
+using MusicCollectionManager.Services;
+using MusicCollectionManager.Services.Logging;
 
 namespace MusicCollectionManager.UI
 {
@@ -11,8 +14,17 @@ namespace MusicCollectionManager.UI
     /// - Visar spinner vid "data load"
     /// - Loopar tills användaren väljer Exit
     /// </summary>
-    public static class MainMenu
+    public class MainMenu
     {
+        private readonly MusicLibraryService _musicLibrary;
+        private readonly LogService _logService;
+
+        public MainMenu(MusicLibraryService musicLibrary, LogService logService)
+        {
+            _musicLibrary = musicLibrary ?? throw new ArgumentNullException(nameof(musicLibrary));
+            _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+        }
+
         // Menyval enligt issuet
         private static readonly string[] MenuItems =
         {
@@ -26,19 +38,18 @@ namespace MusicCollectionManager.UI
 
         /// <summary>
         /// Startar huvudmeny loopen.
-        /// (In med MusicLibraryService?).
         /// </summary>
-        public static void Run()
+        public async Task Run()
         {
             ShowIntro();
 
-            // Simulerad initial data load, ersätta?
-            ShowLoadingSpinner("Loading data...");
+            // Simulerad initial data load
+            await ShowLoadingSpinnerAsync("Loading data...");
 
             bool running = true;
             while (running)
             {
-                AnsiConsole.Clear();
+                Console.Clear();
                 ShowHeader();
 
                 var choice = AnsiConsole.Prompt(
@@ -52,28 +63,23 @@ namespace MusicCollectionManager.UI
                 switch (choice)
                 {
                     case "Artists":
-                        NavigateTo("Artists");
-                        // TODO: ArtistsUI.Show();
+                        await NavigateToArtistMenu();
                         break;
 
                     case "Albums":
-                        NavigateTo("Albums");
-                        // TODO: AlbumsUI.Show();
+                        await NavigateToAlbumMenu();
                         break;
 
                     case "Tracks":
-                        NavigateTo("Tracks");
-                        // TODO: TracksUI.Show();
+                        await NavigateToTrackMenu();
                         break;
 
                     case "Search":
-                        NavigateTo("Search");
-                        // TODO: SearchUI.Show();
+                        await NavigateToSearchMenu();
                         break;
 
                     case "Statistics":
-                        NavigateTo("Statistics");
-                        // TODO: StatisticsUI.Show();
+                        await NavigateToStatistics();
                         break;
 
                     case "Exit":
@@ -85,7 +91,7 @@ namespace MusicCollectionManager.UI
             ShowGoodbye();
         }
 
-        private static void ShowIntro()
+        private void ShowIntro()
         {
             AnsiConsole.Clear();
 
@@ -100,10 +106,9 @@ namespace MusicCollectionManager.UI
             AnsiConsole.Write(subtitle);
 
             AnsiConsole.MarkupLine("[grey]Initializing UI...[/]");
-            ShowLoadingSpinner("Booting Spectre.Console...");
         }
 
-        private static void ShowHeader()
+        private void ShowHeader()
         {
             var rule = new Rule("[bold green]Main Menu[/]")
             {
@@ -117,46 +122,69 @@ namespace MusicCollectionManager.UI
                 "[grey]Tips:[/] Använd [bold]piltangenter[/] + [bold]Enter[/].\n");
         }
 
-        private static void NavigateTo(string sectionName)
+        private async Task NavigateToArtistMenu()
         {
-            // Spinner varje gång man går till en sektion
-            ShowLoadingSpinner($"Opening {sectionName}...");
-
-            // Tillfällig placeholder vy
-            AnsiConsole.Clear();
-            AnsiConsole.Write(new Rule($"[bold aqua]{sectionName}[/]")
-            {
-                Justification = Justify.Left
-            });
-
-            AnsiConsole.MarkupLine("[grey]Här kopplar vi in våran riktiga UI-sida senare.[/]");
-            AnsiConsole.MarkupLine("Tryck valfri tangent för att gå tillbaka till menyn...");
-            Console.ReadKey(true);
+            await ShowLoadingSpinnerAsync("Opening Artists...");
+            
+            var artistMenu = new ArtistMenu(_musicLibrary, _logService);
+            await artistMenu.ShowArtistMenu();
         }
 
-        private static void ShowLoadingSpinner(string message)
+        private async Task NavigateToAlbumMenu()
         {
-            AnsiConsole.Status()
+            await ShowLoadingSpinnerAsync("Opening Albums...");
+            
+            var albumMenu = new AlbumMenu(_musicLibrary, _logService);
+            await albumMenu.ShowAlbumMenu();
+        }
+
+        private async Task NavigateToTrackMenu()
+        {
+            await ShowLoadingSpinnerAsync("Opening Tracks...");
+            
+            var trackMenu = new TrackMenu(_musicLibrary, _logService);
+            await trackMenu.ShowTrackMenu();
+        }
+
+        private async Task NavigateToSearchMenu()
+        {
+            await ShowLoadingSpinnerAsync("Opening Search...");
+            
+            var searchMenu = new SearchMenu(_musicLibrary, _logService);
+            await searchMenu.ShowSearchMenu();
+        }
+
+        private async Task NavigateToStatistics()
+        {
+            await ShowLoadingSpinnerAsync("Loading Statistics...");
+            
+            var statistics = new StatisticsMenu(_musicLibrary, _logService);
+            await statistics.ShowStatistics();
+        }
+
+        private async Task ShowLoadingSpinnerAsync(string message)
+        {
+            await AnsiConsole.Status()
                 .Spinner(Spinner.Known.Dots)
                 .SpinnerStyle(Style.Parse("green"))
-                .Start(message, ctx =>
+                .StartAsync(message, async ctx =>
                 {
-                    // Simulerad väntan – byt till riktig load (IO/JSON/DB)
-                    Thread.Sleep(700);
+                    // Simulerad väntan
+                    await Task.Delay(700);
                 });
         }
 
-        private static bool ConfirmExit()
+        private bool ConfirmExit()
         {
             var confirm = AnsiConsole.Confirm("Vill du avsluta programmet?", false);
             return !confirm; // om true = avsluta -> running = false
         }
 
-        private static void ShowGoodbye()
+        private void ShowGoodbye()
         {
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine("[bold green]Tack för att du använde Music Collection Manager![/]");
-            Thread.Sleep(350);
+            System.Threading.Thread.Sleep(350);
         }
     }
 }
